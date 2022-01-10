@@ -1392,7 +1392,8 @@ void guac_rdp_push_settings(guac_client* client,
     rdp_settings->DesktopHeight = guac_settings->height;
     rdp_settings->AlternateShell = guac_strdup(guac_settings->initial_program);
     rdp_settings->KeyboardLayout = guac_settings->server_layout->freerdp_keyboard_layout;
-
+    rdp_settings->UseMultimon = true;
+    rdp_settings->ForceMultimon = true;
     /* Performance flags */
     /* Explicitly set flag value */
     rdp_settings->PerformanceFlags = guac_rdp_get_performance_flags(guac_settings);
