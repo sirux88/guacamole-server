@@ -114,6 +114,8 @@ typedef struct guac_common_cursor {
      * @see GUAC_CLIENT_MOUSE_RIGHT
      * @see GUAC_CLIENT_MOUSE_SCROLL_UP
      * @see GUAC_CLIENT_MOUSE_SCROLL_DOWN
+     * @see GUAC_CLIENT_MOUSE_FORTH
+     * @see GUAC_CLIENT_MOUSE_FIFTH
      */
     int button_mask;
 
