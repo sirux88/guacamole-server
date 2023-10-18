@@ -70,7 +70,7 @@ int guac_rdp_user_mouse_handler(guac_user* user, int x, int y, int mask) {
         int pressed_mask  = ~rdp_client->mouse_button_mask &  mask;
 
         /* Release event */
-        if (released_mask & 0x67 ) {
+        if (released_mask & 0x07 ) {
 
             /* Calculate flags */
             int flags = 0;
@@ -82,31 +82,52 @@ int guac_rdp_user_mouse_handler(guac_user* user, int x, int y, int mask) {
 
             /* Send event */
             pthread_mutex_lock(&(rdp_client->message_lock));
-            if(flags & 0x03) rdp_inst->input->ExtendedMouseEvent(rdp_inst->input, flags, x, y);
-            else rdp_inst->input->MouseEvent(rdp_inst->input, flags, x, y);
+            rdp_inst->input->MouseEvent(rdp_inst->input, flags, x, y);
+            pthread_mutex_unlock(&(rdp_client->message_lock));
+
+        }
+
+        /* Release extended event */
+         if (released_mask & 0x60 ) {
+
+            /* Calculate flags */
+            int flags = 0;
+            if (released_mask & 0x20) flags |= PTR_XFLAGS_BUTTON1;
+            if (released_mask & 0x40) flags |= PTR_XFLAGS_BUTTON2;
+
+            /* Send event */
+            pthread_mutex_lock(&(rdp_client->message_lock));
+            rdp_inst->input->ExtendedMouseEvent(rdp_inst->input, flags, x, y);
             pthread_mutex_unlock(&(rdp_client->message_lock));
 
         }
 
         /* Press event */
-        if (pressed_mask & 0x67) {
+        if (pressed_mask & 0x07) {
 
             /* Calculate flags */
             int flags = PTR_FLAGS_DOWN;
             if (pressed_mask & 0x01) flags |= PTR_FLAGS_BUTTON1;
             if (pressed_mask & 0x02) flags |= PTR_FLAGS_BUTTON3;
             if (pressed_mask & 0x04) flags |= PTR_FLAGS_BUTTON2;
-            if (pressed_mask & 0x20) flags |= PTR_XFLAGS_BUTTON1;
-            if (pressed_mask & 0x40) flags |= PTR_XFLAGS_BUTTON2;
             if (pressed_mask & 0x08) flags |= PTR_FLAGS_WHEEL | 0x78;
             if (pressed_mask & 0x10) flags |= PTR_FLAGS_WHEEL | PTR_FLAGS_WHEEL_NEGATIVE | 0x88;
 
             /* Send event */
-            pthread_mutex_lock(&(rdp_client->message_lock));
-            if(flags & 0x03) rdp_inst->input->ExtendedMouseEvent(rdp_inst->input, flags, x, y);
-            else rdp_inst->input->MouseEvent(rdp_inst->input, flags, x, y);
+            pthread_mutex_lock(&(rdp_client->message_lock))
+            rdp_inst->input->MouseEvent(rdp_inst->input, flags, x, y);
             pthread_mutex_unlock(&(rdp_client->message_lock));
 
+        }
+        
+        /* Press extended event */
+        if(pressed_mask & 0x60){
+            int flags = PTR_XFLAGS_DOWN;
+            if (pressed_mask & 0x20) flags |= PTR_XFLAGS_BUTTON1;
+            if (pressed_mask & 0x40) flags |= PTR_XFLAGS_BUTTON2;
+            pthread_mutex_lock(&(rdp_client->message_lock));
+            rdp_inst->input->ExtendedMouseEvent(rdp_inst->input, flags, x, y);
+            pthread_mutex_unlock(&(rdp_client->message_lock));
         }
 
         /* Scroll event */
