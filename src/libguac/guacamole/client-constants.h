@@ -76,9 +76,9 @@
 #define GUAC_CLIENT_MOUSE_SCROLL_DOWN 0x10
 
 /**
- * The flag set in the mouse button mask when the forth mouse button is down.
+ * The flag set in the mouse button mask when the foUrth mouse button is down.
  */
-#define GUAC_CLIENT_MOUSE_FORTH 0x20
+#define GUAC_CLIENT_MOUSE_FOURTH 0x20
 
 /**
  * The flag set in the mouse button mask when the fifth mouse button is down.
